@@ -2,7 +2,7 @@
 
 Interactive terminal-based menu to control Ubuntu system functions.
 
-![Menu Screenshot](https://via.placeholder.com/600x400?text=System+Control+Menu)
+
 
 **JUNIA-ISEN - Linux Scripting Course Project**  
 **February 2026**
@@ -11,11 +11,11 @@ Interactive terminal-based menu to control Ubuntu system functions.
 
 ## 👥 Team Members
 
-**JUNIA-ISEN M1 - Linux Scripting Course (2025-2026)**
-
-- 👨‍💻 **Salah Eddine Boudi**
-- 👨‍💻 **Mahmoud Ali El Sayed**
-- 👨‍💻 **Hekla Scheving**
+| Name |
+|------|
+| **Salah Eddine Boudi** |
+| **Mahmoud Ali El Sayed** |
+| **Hekla Scheving** |
 
 ---
 
@@ -66,65 +66,74 @@ chmod +x main.sh
 - Press **Enter** to select
 - Use **number keys** in sub-menus
 
-### Example: Network Speed Test
-```bash
-./main.sh → Network Tools → Test Internet Speed
-Select file size: 100 MB
-✅ Download Speed: 1234 KB/s (9 Mbps)
-```
-
 ---
 
 ## 🛠️ Requirements
 
 ### System
-- **OS:** Ubuntu 20.04 or later (tested on 24.04)
+- **OS:** Ubuntu 20.04 or later
 - **Shell:** Bash 4.0+
 
 ### Dependencies
-- `nmcli` - Network Manager (pre-installed on Ubuntu)
+- `nmcli` - Network Manager
 - `bluetoothctl` - Bluetooth control
 - `pactl` - PulseAudio control
-- `top`, `free`, `df` - System monitoring (standard utilities)
-- `wget` - For network speed test
-
-### Install missing dependencies (if needed)
-```bash
-sudo apt update
-sudo apt install network-manager pulseaudio-utils wget
-```
+- `top`, `free`, `df` - System monitoring
+- `wget` - Network speed test
 
 ---
 
 ## 📁 Project Structure
 ```
 system-control-menu/
-├── main.sh                 # Main entry point with navigation
+├── main.sh                 # Main entry point
 ├── lib/                    # Library modules
-│   ├── ui.sh              # User interface functions
-│   ├── utils.sh           # Utility functions and logging
-│   ├── wifi.sh            # WiFi/Network management
+│   ├── ui.sh              # User interface
+│   ├── utils.sh           # Utility functions
+│   ├── wifi.sh            # WiFi management
 │   ├── bluetooth.sh       # Bluetooth control
 │   ├── audio.sh           # Audio control
-│   ├── system.sh          # System info, monitoring & power
+│   ├── system.sh          # System info & power
 │   ├── scheduler.sh       # Task scheduling
-│   ├── network.sh         # Network tools (speed test, ping)
-│   └── cleaner.sh         # System cleaning utilities
+│   ├── network.sh         # Network tools
+│   └── cleaner.sh         # System cleaner
 ├── logs/                   # Application logs
-│   └── system-menu.log
 ├── data/                   # Persistent data
-│   ├── scheduled_tasks.txt
-│   └── reminders.txt
-└── README.md              # This file
+└── README.md              # Documentation
 ```
 
 ---
-## 🧪 Testing
 
-### Manual Testing
-```bash
-# Test all features
-./main.sh
+## 🎓 Academic Context
+
+- **Institution:** JUNIA-ISEN
+- **Course:** Linux Scripting
+- **Level:** Master 1 (M1)
+- **Year:** 2025-2026
+
+---
+
+## 📸 Screenshots
+
+### Main Menu
+```
+╔════════════════════════════════════╗
+║   SYSTEM CONTROL MENU v1.0.0       ║
+╚════════════════════════════════════╝
+
+  ▶ 📡 WiFi Management
+    🔵 Bluetooth Control
+    🔊 Audio Control
+    💻 System Information
+    📊 System Monitor
+    ⏰ Task Scheduler
+    🌐 Network Tools
+    🧹 System Cleaner
+    ⚡ Power Management
+    🚪 Exit
+```
+
+---
 
 ## 📄 License
 
@@ -133,26 +142,13 @@ Not for commercial use.
 
 ---
 
-
-# 🙏 Acknowledgments
-
-- JUNIA-ISEN Faculty - Linux Scripting Course
-- Course materials and documentation
-- Team collaboration and peer learning
-- Open source community
-
----
-
 ## 📧 Contact
 
-**Team Lead:** Salah Eddine Boudi  
 **GitHub:** [@Salah-eddine-boudi](https://github.com/Salah-eddine-boudi)  
-**Institution:** JUNIA-ISEN  
-**Project Repository:** [system-control-menu](https://github.com/Salah-eddine-boudi/system-control-menu)
+**Repository:** [system-control-menu](https://github.com/Salah-eddine-boudi/system-control-menu)
 
 ---
 
-
+⭐ **If you found this project useful, please give it a star!**
 
 📚 **Academic Project** | 🎓 **JUNIA-ISEN M1** | 💻 **Linux Scripting 2026**
-
