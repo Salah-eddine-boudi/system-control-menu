@@ -1,53 +1,44 @@
-# System Control
+# 🖥️ System Control Menu
 
-Interactive terminal menu to control Ubuntu system functions.
+Interactive terminal-based menu to control Ubuntu system functions.
 
-## Team Members
-- **Salah Eddine Boudi** - Team Lead + Core Infrastructure
-- **Person 2** - Network & Connectivity Specialist  
-- **Person 3** - System & Audio Specialist
+![Menu Screenshot](https://via.placeholder.com/600x400?text=System+Control+Menu)
 
-## Features
-- WiFi Management
-- Bluetooth Control
-- Audio Control
-- System Information
-- Power Management
+**JUNIA-ISEN - Linux Scripting Course Project**  
+**February 2026**
 
-## Installation
+---
+
+## 👥 Team Members
+
+| Name |
+|------|
+| **Salah Eddine Boudi** |
+| **Mahmoud Ali El Sayed** |
+| **Hekla Scheving** |
+
+---
+
+## ✨ Features
+
+### Network & Connectivity
+- 📡 **WiFi Management** - Enable/disable network interfaces
+- 🌐 **Network Tools** - Speed test, ping, connection diagnostics
+- 🔵 **Bluetooth Control** - Bluetooth device management
+
+### System Monitoring
+- 💻 **System Information** - CPU, Memory, Disk, Network stats
+- 📊 **System Monitor** - Real-time dashboard with auto-refresh
+- 🧹 **System Cleaner** - Clean temporary files and cache
+
+### Automation & Power
+- ⏰ **Task Scheduler** - Schedule shutdowns and reminders
+- ⚡ **Power Management** - Shutdown, reboot, suspend
+
+### Media
+- 🔊 **Audio Control** - Volume control and audio settings
+
+---
+
+## 🚀 Installation
 ```bash
-git clone https://github.com/VOTRE_USERNAME/system-control-menu.git
-cd system-control-menu
-chmod +x main.sh
-```
-
-## Usage
-```bash
-./main.sh
-```
-
-## Requirements
-- Ubuntu 20.04 or later
-- nmcli (Network Manager)
-- bluetoothctl
-- pactl (PulseAudio)
-
-## Project Structure
-```
-├── main.sh              # Main entry point
-├── lib/                 # Library modules
-│   ├── ui.sh           # User interface
-│   ├── wifi.sh         # WiFi management
-│   ├── bluetooth.sh    # Bluetooth control
-│   ├── audio.sh        # Audio control
-│   ├── system.sh       # System info & power
-│   └── utils.sh        # Utility functions
-├── config/              # Configuration files
-├── logs/                # Log files
-└── tests/               # Test scripts
-```
-
-## Development
-
-Project for JUNIA - Linux Scripting Course
-Date: February 2026
