@@ -11,6 +11,8 @@ source "$SCRIPT_DIR/lib/utils.sh"
 source "$SCRIPT_DIR/lib/scheduler.sh"
 source "$SCRIPT_DIR/lib/network.sh"
 source "$SCRIPT_DIR/lib/cleaner.sh"
+source "$SCRIPT_DIR/lib/password.sh"
+source "$SCRIPT_DIR/lib/theme.sh"
 
 readonly VERSION="1.0.0"
 readonly LOG_FILE="$SCRIPT_DIR/logs/system-menu.log"
@@ -19,10 +21,16 @@ mkdir -p "$SCRIPT_DIR/logs"
 
 show_menu() {
     local selected=$1
-    local items=("WiFi Management" "Bluetooth Control" "Audio Control" "System Information" "System Monitor" "Task Scheduler" "Network Tools" "System Cleaner" "Power Management" "Exit")
-    local icons=("📡" "🔵" "🔊" "💻" "📊" "⏰" "🌐" "🧹" "⚡" "🚪")
+    
+   local items=("WiFi Management" "Bluetooth Control" "Audio Control" 
+             "System Information" "System Monitor" "Task Scheduler" 
+             "Network Tools" "System Cleaner" "Power Management" 
+             "Password Generator" "Theme Customization" "Exit")
+
+local icons=("📡" "🔵" "🔊" "💻" "📊" "⏰" "🌐" "🧹" "⚡" "🔐" "🎨" "🚪")
     
     clear
+    
     echo "╔════════════════════════════════════╗"
     echo "║   SYSTEM CONTROL MENU v$VERSION    ║"
     echo "╚════════════════════════════════════╝"
@@ -49,7 +57,7 @@ main() {
     fi
     
     local selected=0
-    local num_items=10
+    local num_items=12
     
     while true; do
         show_menu $selected
@@ -75,22 +83,24 @@ main() {
             esac
         elif [ "$key" = "" ]; then
             case $selected in
-                0) wifi_menu ;;
-                1) bluetooth_menu ;;
-                2) audio_menu ;;
-                3) system_menu ;;
-                4) system_monitor_dashboard ;;
-                5) scheduler_menu ;;
-                6) network_menu ;;
-                7) cleaner_menu ;;
-                8) power_menu ;;
-                9)
-                    clear
-                    echo "Thank you for using System Control Menu!"
-                    log_message "INFO" "System Control Menu exited normally"
-                    exit 0
-                    ;;
-            esac
+    0) wifi_menu ;;
+    1) bluetooth_menu ;;
+    2) audio_menu ;;
+    3) system_menu ;;
+    4) system_monitor_dashboard ;;
+    5) scheduler_menu ;;
+    6) network_menu ;;
+    7) cleaner_menu ;;
+    8) power_menu ;;
+    9) password_menu ;;
+    10) theme_menu ;;
+    11)
+        clear
+        echo "Thank you for using System Control Menu!"
+        log_message "INFO" "System Control Menu exited normally"
+        exit 0
+        ;;
+esac
         fi
     done
 }

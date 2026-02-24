@@ -1,5 +1,13 @@
 #!/bin/bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+readonly LOG_FILE="$SCRIPT_DIR/logs/system-menu.log"
+readonly ERROR_LOG="$SCRIPT_DIR/logs/errors.log"
+
+mkdir -p "$SCRIPT_DIR/logs"
+mkdir -p "$SCRIPT_DIR/data"
+
 log_message() {
     local level="${1:-INFO}"
     local message="$2"
@@ -8,6 +16,10 @@ log_message() {
     touch "$LOG_FILE" 2>/dev/null
     
     echo "[$timestamp] [$level] $message" >> "$LOG_FILE"
+    
+    if [ "$level" = "ERROR" ]; then
+        echo "[$timestamp] [ERROR] $message" >> "$ERROR_LOG"
+    fi
 }
 
 check_command_exists() {
@@ -18,6 +30,30 @@ check_command_exists() {
     else
         return 1
     fi
+}
+
+check_multiple_commands() {
+    local missing=()
+    
+    for cmd in "$@"; do
+        if ! check_command_exists "$cmd"; then
+            missing+=("$cmd")
+        fi
+    done
+    
+    if [ ${#missing[@]} -gt 0 ]; then
+        echo "Missing commands:"
+        for cmd in "${missing[@]}"; do
+            echo "  - $cmd"
+        done
+        return 1
+    fi
+    
+    return 0
+}
+
+is_root() {
+    [ "$EUID" -eq 0 ]
 }
 
 require_sudo() {
@@ -45,6 +81,79 @@ validate_yes_no() {
     esac
 }
 
-is_root() {
-    [ "$EUID" -eq 0 ]
+is_number() {
+    local input="$1"
+    
+    if [[ "$input" =~ ^[0-9]+$ ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+is_empty() {
+    local input="$1"
+    
+    if [ -z "$input" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+check_file_exists() {
+    local file="$1"
+    
+    if [ -f "$file" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+check_dir_exists() {
+    local dir="$1"
+    
+    if [ -d "$dir" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+pause_screen() {
+    echo ""
+    read -p "Press Enter to continue..." dummy
+}
+
+confirm_action() {
+    local prompt="$1"
+    local response
+    
+    read -p "$prompt (y/n): " response
+    
+    if validate_yes_no "$response"; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+get_timestamp() {
+    date '+%Y-%m-%d_%H-%M-%S'
+}
+
+get_date() {
+    date '+%Y-%m-%d'
+}
+
+cleanup_temp_files() {
+    log_message "INFO" "Cleaning temporary files"
+    
+    rm -f "$SCRIPT_DIR"/*.tmp 2>/dev/null
+    rm -f "$SCRIPT_DIR"/data/*.tmp 2>/dev/null
+    
+    find "$SCRIPT_DIR/logs" -type f -name "*.log" -mtime +7 -delete 2>/dev/null
+    
+    log_message "INFO" "Cleanup completed"
 }
