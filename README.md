@@ -2,8 +2,6 @@
 
 Interactive terminal-based menu to control Ubuntu system functions.
 
-
-
 **JUNIA-ISEN - Linux Scripting Course Project**  
 **February 2026**
 
@@ -37,6 +35,43 @@ Interactive terminal-based menu to control Ubuntu system functions.
 
 ### Media
 - 🔊 **Audio Control** - Volume control and audio settings
+
+### Security & Customization
+- 🔐 **Password Generator** - Generate and save secure passwords
+- 🎨 **Theme Customization** - Choose from 5 different themes
+
+### File Management
+- 🔍 **File Finder** - Search files by name, extension, or size _(COMING SOON)_
+
+---
+
+## 🆕 Latest Updates
+
+### Version 1.0.0 (February 2026)
+
+**New Modules Added:**
+
+#### 🔐 Password Generator
+- Generate secure random passwords (8-32 characters)
+- Include numbers and symbols options
+- Save passwords with labels and usernames
+- View all saved passwords
+- Delete all passwords option
+
+#### 🎨 Theme Customization
+- 5 theme options available
+- Save theme preference
+- View current active theme
+- Themes: Default (Blue), Dark, Matrix (Green), Purple, Ocean (Cyan)
+
+#### 🔍 File Finder _(In Development)_
+- Search files by name
+- Search by file extension
+- Search by file size
+- Find recent files (last 7 days)
+- Open found files with default application
+
+**Currently: 12 modules functional, 1 in development**
 
 ---
 
@@ -80,6 +115,8 @@ chmod +x main.sh
 - `pactl` - PulseAudio control
 - `top`, `free`, `df` - System monitoring
 - `wget` - Network speed test
+- `find` - File search utility
+- `xdg-open` - Default file opener
 
 ---
 
@@ -96,11 +133,27 @@ system-control-menu/
 │   ├── system.sh          # System info & power
 │   ├── scheduler.sh       # Task scheduling
 │   ├── network.sh         # Network tools
-│   └── cleaner.sh         # System cleaner
+│   ├── cleaner.sh         # System cleaner
+│   ├── password.sh        # Password generator
+│   ├── theme.sh           # Theme customization
+│   └── finder.sh          # File finder (in development)
 ├── logs/                   # Application logs
 ├── data/                   # Persistent data
 └── README.md              # Documentation
 ```
+
+---
+
+## 📊 Project Statistics
+
+- **13 modules** (12 functional + 1 in development)
+- **~2,700 lines of bash code**
+- **Modular architecture**
+- **Full logging system**
+- **Data persistence**
+- **Arrow key navigation**
+- **Input validation**
+- **Error handling**
 
 ---
 
@@ -110,6 +163,18 @@ system-control-menu/
 - **Course:** Linux Scripting
 - **Level:** Master 1 (M1)
 - **Year:** 2025-2026
+
+**Learning objectives demonstrated:**
+- Bash scripting fundamentals
+- Functions and modularity
+- File I/O operations
+- Process management
+- System interaction
+- User input handling
+- Error management
+- Code organization
+- File system navigation
+- Search algorithms
 
 ---
 
@@ -130,8 +195,83 @@ system-control-menu/
     🌐 Network Tools
     🧹 System Cleaner
     ⚡ Power Management
+    🔐 Password Generator
+    🎨 Theme Customization
+    🔍 File Finder
     🚪 Exit
+
+════════════════════════════════════
+Use ↑/↓ arrows to navigate, Enter to select
 ```
+
+### Password Generator
+```
+╔════════════════════════════════════╗
+║      PASSWORD GENERATOR            ║
+╚════════════════════════════════════╝
+
+Last generated: (none)
+
+  ▶ Generate Password
+    Save Last Password
+    View Saved Passwords
+    Delete All Passwords
+    Back to Main Menu
+```
+
+### Theme Customization
+```
+╔════════════════════════════════════╗
+║      THEME CUSTOMIZATION           ║
+╚════════════════════════════════════╝
+
+Current Theme: Matrix (Green)
+
+  ▶ Default Theme (Blue)
+    Dark Theme (White)
+    Matrix Theme (Green)
+    Purple Theme
+    Ocean Theme (Cyan)
+    Preview Theme Colors
+    Back to Main Menu
+```
+
+### File Finder _(Coming Soon)_
+```
+╔════════════════════════════════════╗
+║         FILE FINDER                ║
+╚════════════════════════════════════╝
+
+  ▶ Search by Name
+    Search by Extension
+    Search by Size
+    Find Recent Files
+    Back to Main Menu
+```
+
+---
+
+## 🗓️ Roadmap
+
+### ✅ Completed
+- WiFi Management
+- Bluetooth Control
+- Audio Control
+- System Information
+- System Monitor
+- Task Scheduler
+- Network Tools
+- System Cleaner
+- Power Management
+- Password Generator
+- Theme Customization
+
+### 🚧 In Progress
+- File Finder
+
+### 📋 Planned
+- Backup Manager
+- Process Manager
 
 ---
 
@@ -149,6 +289,6 @@ Not for commercial use.
 
 ---
 
-⭐ **If you found this project useful, please give it a star!**
 
-📚 **Academic Project** | 🎓 **JUNIA-ISEN M1** | 💻 **Linux Scripting 2026**
+
+📚 **Academic Project** | 🎓 **JUNIA-ISEN M1** | 💻 **Linux Scripting 2026**s
