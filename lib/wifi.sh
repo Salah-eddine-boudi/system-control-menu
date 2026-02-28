@@ -72,7 +72,6 @@ network_on() {
     echo ""
     
     if ! check_command_exists "nmcli"; then
-        display_error "nmcli not found"
         display_info "Install with: sudo apt install network-manager"
         echo ""
         pause_screen
@@ -87,30 +86,18 @@ network_on() {
     read -p "Enter interface name (e.g., ens33, eth0): " interface
     
     if is_empty "$interface"; then
-        display_error "No interface specified"
         echo ""
         pause_screen
         return 1
     fi
     
     echo ""
-    display_info "Enabling $interface..."
     
     nmcli device connect "$interface" 2>/dev/null
     
     if [ $? -eq 0 ]; then
-        sleep 2
         display_success "Network enabled on $interface"
-        
-        echo ""
-        display_info "Connection details:"
-        echo ""
-        nmcli device show "$interface" 2>/dev/null | grep "IP4.ADDRESS" | head -1
-        
-        log_message "INFO" "Network enabled on $interface"
     else
-        display_error "Failed to enable $interface"
-        display_info "Check if interface name is correct"
         log_message "ERROR" "Failed to enable $interface"
     fi
     
@@ -126,17 +113,11 @@ network_off() {
     echo ""
     
     if ! check_command_exists "nmcli"; then
-        display_error "nmcli not found"
         display_info "Install with: sudo apt install network-manager"
         echo ""
         pause_screen
         return 1
     fi
-    
-    display_info "Current network interfaces:"
-    echo ""
-    nmcli device status
-    echo ""
     
     read -p "Enter interface name (e.g., ens33, eth0): " interface
     
@@ -152,18 +133,12 @@ network_off() {
     read -p "Continue? (y/n): " confirm
     
     if [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]; then
-        echo ""
-        display_info "Disabling $interface..."
-        
         nmcli device disconnect "$interface" 2>/dev/null
         
         if [ $? -eq 0 ]; then
             display_success "Network disabled on $interface"
-            log_message "INFO" "Network disabled on $interface"
         else
             display_error "Failed to disable $interface"
-            display_info "Check if interface is connected"
-            log_message "ERROR" "Failed to disable $interface"
         fi
     else
         display_info "Cancelled"
