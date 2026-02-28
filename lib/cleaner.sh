@@ -37,25 +37,21 @@ analyze_system() {
     display_info "Scanning directories..."
     echo ""
     
-    # Temp files
     if [ -d /tmp ]; then
         temp_size=$(du -sh /tmp 2>/dev/null | awk '{print $1}')
         echo "  Temp files:      $temp_size"
     fi
-    
-    # APT cache
+
     if [ -d /var/cache/apt ]; then
         apt_size=$(du -sh /var/cache/apt 2>/dev/null | awk '{print $1}')
         echo "  APT cache:       $apt_size"
     fi
-    
-    # Thumbnails
+
     if [ -d "$HOME/.cache/thumbnails" ]; then
         thumb_size=$(du -sh "$HOME/.cache/thumbnails" 2>/dev/null | awk '{print $1}')
         echo "  Thumbnails:      $thumb_size"
     fi
-    
-    # Trash
+
     if [ -d "$HOME/.local/share/Trash" ]; then
         trash_size=$(du -sh "$HOME/.local/share/Trash" 2>/dev/null | awk '{print $1}')
         echo "  Trash:           $trash_size"
@@ -63,7 +59,6 @@ analyze_system() {
     
     echo ""
     display_success "Analysis complete"
-    log_message "INFO" "System analysis completed"
     
     echo ""
     pause_screen
@@ -88,26 +83,22 @@ clean_system() {
     echo ""
     display_info "Cleaning system..."
     echo ""
-    
-    # Clean thumbnails
+
     if [ -d "$HOME/.cache/thumbnails" ]; then
         rm -rf "$HOME/.cache/thumbnails/"*
         echo "✓ Thumbnails cleaned"
     fi
-    
-    # Clean trash
+
     if [ -d "$HOME/.local/share/Trash/files" ]; then
         rm -rf "$HOME/.local/share/Trash/files/"*
         echo "✓ Trash emptied"
     fi
-    
-    # Clean user temp
+
     rm -rf /tmp/tmp.* 2>/dev/null
     echo "✓ Temp files cleaned"
     
     echo ""
     display_success "System cleaned"
-    log_message "INFO" "System cleaned successfully"
     
     echo ""
     pause_screen
