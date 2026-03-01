@@ -144,18 +144,7 @@ system-control-menu/
 
 ---
 
-## 📊 Project Statistics
 
-- **13 modules** (12 functional + 1 in development)
-- **~2,700 lines of bash code**
-- **Modular architecture**
-- **Full logging system**
-- **Data persistence**
-- **Arrow key navigation**
-- **Input validation**
-- **Error handling**
-
----
 
 ## 🎓 Academic Context
 
@@ -164,19 +153,7 @@ system-control-menu/
 - **Level:** Master 1 (M1)
 - **Year:** 2025-2026
 
-**Learning objectives demonstrated:**
-- Bash scripting fundamentals
-- Functions and modularity
-- File I/O operations
-- Process management
-- System interaction
-- User input handling
-- Error management
-- Code organization
-- File system navigation
-- Search algorithms
 
----
 
 ## 📸 Screenshots
 
@@ -265,9 +242,10 @@ Current Theme: Matrix (Green)
 - Power Management
 - Password Generator
 - Theme Customization
+- File Finder
 
 ### 🚧 In Progress
-- File Finder
+
 
 ### 📋 Planned
 - Backup Manager
@@ -278,14 +256,22 @@ Current Theme: Matrix (Green)
 ## 📄 License
 
 Educational Project - JUNIA-ISEN  
-Not for commercial use.
+
 
 ---
+## 👨‍🏫 Course Instructor
 
+**Pierre CAPIOD**  
+*Linux Scripting - JUNIA-ISEN M1 (2025-2026)*  
+📧 pierre.capiod@junia.com
+
+
+---
 ## 📧 Contact
 
 **GitHub:** [@Salah-eddine-boudi](https://github.com/Salah-eddine-boudi)  
 **Repository:** [system-control-menu](https://github.com/Salah-eddine-boudi/system-control-menu)
+
 
 ---
 
