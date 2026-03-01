@@ -13,6 +13,8 @@ source "$SCRIPT_DIR/lib/network.sh"
 source "$SCRIPT_DIR/lib/cleaner.sh"
 source "$SCRIPT_DIR/lib/password.sh"
 source "$SCRIPT_DIR/lib/theme.sh"
+source "$SCRIPT_DIR/lib/finder.sh"
+
 
 readonly VERSION="1.0.0"
 readonly LOG_FILE="$SCRIPT_DIR/logs/system-menu.log"
@@ -25,9 +27,9 @@ show_menu() {
    local items=("WiFi Management" "Bluetooth Control" "Audio Control" 
              "System Information" "System Monitor" "Task Scheduler" 
              "Network Tools" "System Cleaner" "Power Management" 
-             "Password Generator" "Theme Customization" "Exit")
+             "Password Generator" "Theme Customization" "File Finder" "Exit")
 
-local icons=("📡" "🔵" "🔊" "💻" "📊" "⏰" "🌐" "🧹" "⚡" "🔐" "🎨" "🚪")
+local icons=("📡" "🔵" "🔊" "💻" "📊" "⏰" "🌐" "🧹" "⚡" "🔐" "🎨" "🔍" "🚪")
     
     clear
     
@@ -57,7 +59,7 @@ main() {
     fi
     
     local selected=0
-    local num_items=12
+    local num_items=13
     
     while true; do
         show_menu $selected
@@ -94,7 +96,8 @@ main() {
     8) power_menu ;;
     9) password_menu ;;
     10) theme_menu ;;
-    11)
+    11) finder_menu ;;
+    12)
         clear
         echo "Thank you for using System Control Menu!"
         log_message "INFO" "System Control Menu exited normally"
