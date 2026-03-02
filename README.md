@@ -41,7 +41,7 @@ Interactive terminal-based menu to control Ubuntu system functions.
 - 🎨 **Theme Customization** - Choose from 5 different themes
 
 ### File Management
-- 🔍 **File Finder** - Search files by name, extension, or size _(COMING SOON)_
+- 🔍 **File Finder** - Search files by name, extension, or size 
 
 ---
 
