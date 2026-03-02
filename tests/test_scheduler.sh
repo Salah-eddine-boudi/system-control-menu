@@ -24,4 +24,4 @@ cat "$REMINDERS_FILE"
 
 echo ""
 echo "=== RÉSULTAT : TEST RÉUSSI ==="
-echo "Le scheduler écrit correctement dans data/reminders.txt"
+echo "Le scheduler écrit correctement dans data/reminders.txt "
