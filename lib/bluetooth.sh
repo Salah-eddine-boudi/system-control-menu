@@ -5,34 +5,38 @@ source "$SCRIPT_DIR/lib/ui.sh"
 source "$SCRIPT_DIR/lib/utils.sh"
 
 bt_cmd() {
-    timeout 2s bluetoothctl "$@" 2>&1
+    timeout 3s bluetoothctl "$@" 2>&1
 }
 
 bt_has_controller() {
     local out
-    out="$(bt_cmd show)"
-    
-    if [ -z "$out" ]; then
-        echo "NO_OUTPUT"
-        return 1
-    fi
-    
-    echo "$out" | grep -qi "No default controller available"
-    if [ $? -eq 0 ]; then
+    out="$(bt_cmd list)"
+    if [ -z "$out" ] || ! echo "$out" | grep -qi "Controller"; then
         echo "NO_CONTROLLER"
         return 1
     fi
-    
     echo "OK"
     return 0
+}
+
+display_bt_solutions() {
+    display_error "Aucun contrôleur Bluetooth détecté"
+    echo "--------------------------------------------------"
+    echo "Solutions possibles :"
+    echo " 1. Si vous êtes sur VM (VMware/VirtualBox) :"
+    echo "    - Connectez une clé USB Bluetooth externe."
+    echo "    - Allez dans le menu 'Périphériques amovibles'."
+    echo "    - Sélectionnez votre clé et cliquez sur 'Connecter'."
+    echo " 2. Si vous êtes sur PC physique :"
+    echo "    - Vérifiez que le Bluetooth est activé dans le BIOS."
+    echo "    - Lancez l'option 'Restart Service' du menu."
+    echo "--------------------------------------------------"
 }
 
 bt_power_state() {
     local out
     out="$(bt_cmd show)"
-    
-    echo "$out" | grep -qi "Powered: yes"
-    if [ $? -eq 0 ]; then
+    if echo "$out" | grep -qi "Powered: yes"; then
         echo "ON"
     else
         echo "OFF"
@@ -42,30 +46,17 @@ bt_power_state() {
 show_bt_status_screen() {
     clear
     display_header "Bluetooth Status"
-    
-    local ctrl
-    ctrl="$(bt_has_controller)"
-    
+    local ctrl_status="$(bt_has_controller)"
     echo "Service Status: $(systemctl is-active bluetooth 2>/dev/null)"
     echo ""
-    
-    if [ "$ctrl" = "OK" ]; then
-        display_success "Controller Available"
+    if [ "$ctrl_status" = "OK" ]; then
+        display_success "Contrôleur prêt"
         echo "Power State: $(bt_power_state)"
         echo ""
-        echo "Controller Details:"
         bt_cmd show | sed 's/^/  /'
-    elif [ "$ctrl" = "NO_CONTROLLER" ]; then
-        display_error "Controller Not Available"
-        echo ""
-        display_warning "VirtualBox/VMware does not expose Bluetooth hardware"
-        display_info "You need a USB Bluetooth adapter with passthrough"
     else
-        display_warning "bluetoothctl produced no output"
-        echo ""
-        display_info "Try: sudo systemctl restart bluetooth"
+        display_bt_solutions
     fi
-    
     echo ""
     pause_screen
 }
@@ -73,51 +64,41 @@ show_bt_status_screen() {
 restart_bt_service() {
     clear
     display_header "Restart Bluetooth Service"
-    
-    display_info "Restarting bluetooth.service..."
-    echo ""
-    
+    display_info "Redémarrage du service..."
     if sudo systemctl restart bluetooth 2>/dev/null; then
-        display_success "Bluetooth service restarted"
+        display_success "Service redémarré avec succès"
     else
-        display_error "Failed to restart bluetooth service"
-        display_info "You may need sudo privileges"
+        display_error "Erreur lors du redémarrage"
     fi
-    
-    echo ""
     pause_screen
 }
 
 scan_devices() {
     clear
     display_header "Scan Bluetooth Devices"
-    
-    local ctrl
-    ctrl="$(bt_has_controller)"
-    
-    if [ "$ctrl" != "OK" ]; then
-        display_error "Cannot scan: No Bluetooth controller"
-        echo ""
-        display_info "Reason: No Bluetooth hardware in VM"
-        echo ""
+    if [ "$(bt_has_controller)" != "OK" ]; then
+        display_bt_solutions
         pause_screen
         return 0
     fi
-    
-    display_info "Powering on Bluetooth..."
-    bt_cmd power on >/dev/null 2>&1 || true
-    
+    display_info "Activation du Bluetooth..."
+    bt_cmd power on >/dev/null 2>&1
     echo ""
-    display_info "Scanning for 6 seconds..."
-    bt_cmd scan on >/dev/null 2>&1
+    display_info "Recherche en cours (6s)..."
+    bt_cmd scan on >/dev/null 2>&1 &
+    local scan_pid=$!
     sleep 6
+    kill $scan_pid 2>/dev/null
     bt_cmd scan off >/dev/null 2>&1
-    
     echo ""
-    echo "Discovered Devices:"
+    echo "Appareils trouvés :"
     echo "-------------------"
-    bt_cmd devices || echo "  No devices found"
-    
+    local devices=$(bt_cmd devices)
+    if [ -n "$devices" ]; then
+        echo "$devices"
+    else
+        echo "  Aucun appareil trouvé"
+    fi
     echo ""
     pause_screen
 }
@@ -125,94 +106,52 @@ scan_devices() {
 power_on_bt() {
     clear
     display_header "Power On Bluetooth"
-    
-    local ctrl
-    ctrl="$(bt_has_controller)"
-    
-    if [ "$ctrl" != "OK" ]; then
-        display_error "No Bluetooth controller available"
-        echo ""
+    if [ "$(bt_has_controller)" != "OK" ]; then
+        display_bt_solutions
         pause_screen
         return 1
     fi
-    
-    display_info "Powering on Bluetooth..."
-    
     if bt_cmd power on >/dev/null 2>&1; then
-        display_success "Bluetooth powered on"
-        log_message "INFO" "Bluetooth powered on"
+        display_success "Bluetooth activé"
     else
-        display_error "Failed to power on Bluetooth"
-        log_message "ERROR" "Failed to power on Bluetooth"
+        display_error "Échec de l'activation"
     fi
-    
-    echo ""
     pause_screen
 }
 
 power_off_bt() {
     clear
     display_header "Power Off Bluetooth"
-    
-    local ctrl
-    ctrl="$(bt_has_controller)"
-    
-    if [ "$ctrl" != "OK" ]; then
-        display_error "No Bluetooth controller available"
-        echo ""
+    if [ "$(bt_has_controller)" != "OK" ]; then
+        display_bt_solutions
         pause_screen
         return 1
     fi
-    
-    display_info "Powering off Bluetooth..."
-    
     if bt_cmd power off >/dev/null 2>&1; then
-        display_success "Bluetooth powered off"
-        log_message "INFO" "Bluetooth powered off"
+        display_success "Bluetooth désactivé"
     else
-        display_error "Failed to power off Bluetooth"
-        log_message "ERROR" "Failed to power off Bluetooth"
+        display_error "Échec de la désactivation"
     fi
-    
-    echo ""
     pause_screen
 }
 
 show_bt_menu() {
     local selected=$1
-    
     clear
     echo "╔════════════════════════════════════╗"
-    echo "║       BLUETOOTH CONTROL            ║"
+    echo "║        BLUETOOTH CONTROL           ║"
     echo "╚════════════════════════════════════╝"
     echo ""
-    
-    local svc
-    svc="$(systemctl is-active bluetooth 2>/dev/null)"
+    local svc="$(systemctl is-active bluetooth 2>/dev/null)"
+    local ctrl_status="$(bt_has_controller)"
     echo "Service: $svc"
-    
-    local ctrl
-    ctrl="$(bt_has_controller)"
-    
-    if [ "$ctrl" = "OK" ]; then
-        echo "Controller: Available | Power: $(bt_power_state)"
-    elif [ "$ctrl" = "NO_CONTROLLER" ]; then
-        echo "Controller: Not available (VM limitation)"
+    if [ "$ctrl_status" = "OK" ]; then
+        echo "Controller: OK | Power: $(bt_power_state)"
     else
-        echo "Controller: No response"
+        echo "Controller: ABSENT (Vérifiez votre clé USB)"
     fi
-    
     echo ""
-    
-    local items=(
-        "Power On"
-        "Power Off"
-        "Scan for Devices"
-        "Show Status"
-        "Restart Service"
-        "Back to Main Menu"
-    )
-    
+    local items=("Power On" "Power Off" "Scan for Devices" "Show Status" "Restart Service" "Back to Main Menu")
     for i in "${!items[@]}"; do
         if [ $i -eq $selected ]; then
             echo "  ▶ ${items[$i]}"
@@ -220,37 +159,22 @@ show_bt_menu() {
             echo "    ${items[$i]}"
         fi
     done
-    
     echo ""
     echo "════════════════════════════════════"
-    echo "Use ↑/↓ arrows, Enter to select"
+    echo "Utilisez ↑/↓ et Entrée pour valider"
 }
 
 bluetooth_menu() {
     local selected=0
     local num_items=6
-    
     while true; do
         show_bt_menu "$selected"
-        
         read -rsn1 key
-        
         if [ "$key" = $'\x1b' ]; then
             read -rsn2 key
-            
             case "$key" in
-                '[A')
-                    selected=$((selected - 1))
-                    if [ $selected -lt 0 ]; then
-                        selected=$((num_items - 1))
-                    fi
-                    ;;
-                '[B')
-                    selected=$((selected + 1))
-                    if [ $selected -ge $num_items ]; then
-                        selected=0
-                    fi
-                    ;;
+                '[A') ((selected--)); [ $selected -lt 0 ] && selected=$((num_items - 1)) ;;
+                '[B') ((selected++)); [ $selected -ge $num_items ] && selected=0 ;;
             esac
         elif [ "$key" = "" ]; then
             case "$selected" in

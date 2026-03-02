@@ -478,8 +478,8 @@ system_monitor_dashboard() {
         echo ""
         
         
-        echo "Refreshing in 3 seconds... (Ctrl+C to exit)"
+        echo "Refreshing in 6 seconds... (Ctrl+C to exit)"
         
-        sleep 12
+        sleep 6
     done
 }

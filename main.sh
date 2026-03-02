@@ -16,7 +16,7 @@ source "$SCRIPT_DIR/lib/theme.sh"
 source "$SCRIPT_DIR/lib/finder.sh"
 
 
-readonly VERSION="1.0.0"
+readonly VERSION="4.0.0"
 readonly LOG_FILE="$SCRIPT_DIR/logs/system-menu.log"
 
 mkdir -p "$SCRIPT_DIR/logs"
@@ -34,7 +34,7 @@ local icons=("📡" "🔵" "🔊" "💻" "📊" "⏰" "🌐" "🧹" "⚡" "🔐"
     clear
     
     echo "╔════════════════════════════════════╗"
-    echo "║   SYSTEM CONTROL MENU v$VERSION    ║"
+    echo "║   SYSTEM CONTROL MENU v$VERSION       ║"
     echo "╚════════════════════════════════════╝"
     echo ""
     

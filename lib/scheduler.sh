@@ -40,275 +40,158 @@ scheduler_menu() {
     done
 }
 
-view_scheduled_tasks() {
-    clear
-    echo "========================================"
-    echo "      SCHEDULED TASKS"
-    echo "========================================"
-    echo ""
-    
-    # Check if shutdown is scheduled
-    if pgrep -x "shutdown" > /dev/null 2>&1; then
-        display_warning "System shutdown is currently scheduled"
-        echo ""
-        echo "To cancel: sudo shutdown -c"
-    else
-        display_info "No shutdown scheduled"
-    fi
-    
-    echo ""
-    echo "Current System Schedule:"
-    echo "----------------------------------------"
-    
-    # Show at jobs if available
-    if check_command_exists "atq"; then
-        at_jobs=$(atq 2>/dev/null)
-        if [ -n "$at_jobs" ]; then
-            echo "$at_jobs"
-        else
-            echo "No scheduled at jobs"
-        fi
-    else
-        echo "at command not available"
-    fi
-    
-    echo ""
-    pause_screen
-}
-
 schedule_shutdown() {
     clear
-    echo "========================================"
-    echo "      SCHEDULE SHUTDOWN"
-    echo "========================================"
-    echo ""
+    display_header "SCHEDULE SHUTDOWN"
     
     echo "Choose shutdown time:"
     echo "  1. In 15 seconds (test)"
-    echo "  2. In 5 minutes"
-    echo "  3. In 30 minutes"
-    echo "  4. In 1 hour"
-    echo "  5. Custom time (minutes)"
+    echo "  2. In 6 minutes"
+    echo "  3. In 15 minutes"
+    echo "  4. Custom time (minutes)"
     echo "  0. Cancel"
     echo ""
     
     read -p "Enter choice: " choice
     
+    use_seconds=0
     case $choice in
-        1) 
-            seconds=15
-            minutes=0
-            use_seconds=1
-            ;;
-        2) minutes=5 ;;
-        3) minutes=30 ;;
-        4) minutes=60 ;;
-        5)
-            read -p "Enter minutes: " minutes
-            if [ -z "$minutes" ]; then
-                display_error "No time entered"
-                pause_screen
-                return 1
-            fi
-            ;;
+        1) seconds=15; use_seconds=1 ;;
+        2) minutes=6 ;;
+        3) minutes=15 ;;
+        4) read -p "Enter minutes: " minutes ;;
         0) return ;;
-        *)
-            display_error "Invalid choice"
-            pause_screen
-            return 1
-            ;;
+        *) display_error "Invalid choice"; pause_screen; return 1 ;;
     esac
     
-    echo ""
-    
     if [ "$use_seconds" = "1" ]; then
-        echo "Scheduling shutdown in $seconds seconds (TEST MODE)"
+        time_str="15 seconds"
+        exec_cmd="sudo shutdown -h +0 'Shutdown in 15s' & sleep 15" 
     else
-        echo "Scheduling shutdown in $minutes minutes"
+        time_str="$minutes minutes"
+        exec_cmd="sudo shutdown -h +$minutes"
     fi
-    echo ""
-    
-    read -p "Confirm? (y/n): " confirm
-    
-    if [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]; then
-        if [ "$use_seconds" = "1" ]; then
-            # For testing: use seconds
-            sudo shutdown -h +0 "Scheduled shutdown - TEST" 2>/dev/null &
-            sleep 1
-            sudo shutdown -c 2>/dev/null
-            sudo shutdown -h $(date -d "+15 seconds" "+%H:%M") "Scheduled shutdown" 2>/dev/null
-        else
-            # Normal: use minutes
-            sudo shutdown -h +$minutes "Scheduled shutdown" 2>/dev/null
-        fi
-        
-        if [ $? -eq 0 ]; then
-            display_success "Shutdown scheduled"
-            log_message "INFO" "Shutdown scheduled"
-        else
-            display_error "Failed to schedule shutdown"
-            echo "You may need sudo privileges"
-        fi
+
+    read -p "Confirm shutdown in $time_str? (y/n): " confirm
+    if [[ "$confirm" =~ ^[yY]$ ]]; then
+        eval $exec_cmd
+        display_success "Shutdown scheduled in $time_str"
     else
         display_info "Cancelled"
     fi
-    
-    echo ""
+    pause_screen
+}
+
+cancel_shutdown() {
+    clear
+    display_header "CANCEL SHUTDOWN"
+    sudo shutdown -c 2>/dev/null
+    if [ $? -eq 0 ]; then
+        display_success "L'arrêt du système a été annulé avec succès."
+        log_message "INFO" "Shutdown cancelled"
+    else
+        display_error "Échec de l'annulation ou aucun arrêt programmé."
+    fi
     pause_screen
 }
 
 set_reminder() {
     clear
-    echo "========================================"
-    echo "      SET REMINDER"
-    echo "========================================"
-    echo ""
+    display_header "SET REMINDER"
     
     read -p "Enter reminder message: " message
+    [ -z "$message" ] && { display_error "Empty message"; pause_screen; return 1; }
     
-    if [ -z "$message" ]; then
-        display_error "Message cannot be empty"
-        pause_screen
-        return 1
-    fi
+    echo "Trigger in:"
+    echo "  1. 15 seconds (test)"
+    echo "  2. 6 minutes"
+    echo "  3. 15 minutes"
+    echo "  4. Custom (minutes)"
     
-    echo ""
-    echo "When should the reminder trigger?"
-    echo "  1. In 15 seconds (test)"
-    echo "  2. In 5 minutes"
-    echo "  3. In 15 minutes"
-    echo "  4. In 30 minutes"
-    echo "  5. In 1 hour"
-    echo "  6. Custom (minutes)"
-    echo ""
+    read -p "Choice: " rchoice
     
-    read -p "Enter choice: " choice
-    
-    case $choice in
-        1)
-            seconds=15
-            minutes=0
-            use_seconds=1
-            ;;
-        2) minutes=5 ;;
+    use_seconds=0
+    case $rchoice in
+        1) seconds=15; use_seconds=1 ;;
+        2) minutes=6 ;;
         3) minutes=15 ;;
-        4) minutes=30 ;;
-        5) minutes=60 ;;
-        6)
-            read -p "Enter minutes: " minutes
-            if [ -z "$minutes" ]; then
-                display_error "No time entered"
-                pause_screen
-                return 1
-            fi
-            ;;
-        *)
-            display_error "Invalid choice"
-            pause_screen
-            return 1
-            ;;
+        4) read -p "Minutes: " minutes ;;
+        *) return 1 ;;
     esac
-    
-    echo ""
-    
+
+    timestamp=$(date +%s)
     if [ "$use_seconds" = "1" ]; then
-        echo "Reminder will trigger in $seconds seconds (TEST MODE)"
+        delay=$seconds
+        trigger_time=$((timestamp + seconds))
     else
-        echo "Reminder will trigger in $minutes minutes"
+        delay=$((minutes * 60))
+        trigger_time=$((timestamp + delay))
     fi
-    echo ""
-    
-    read -p "Confirm? (y/n): " confirm
-    
-    if [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]; then
-        timestamp=$(date +%s)
-        
-        if [ "$use_seconds" = "1" ]; then
-            trigger_time=$((timestamp + seconds))
-            sleep_time=$seconds
-        else
-            trigger_time=$((timestamp + minutes * 60))
-            sleep_time=$((minutes * 60))
-        fi
-        
-        echo "$trigger_time|$message" >> "$REMINDERS_FILE"
-        
-        display_success "Reminder set!"
-        log_message "INFO" "Reminder set: $message"
-        
-        # Background notification
-        (
-            sleep $sleep_time
-            notify-send "⏰ Reminder" "$message" 2>/dev/null || \
-            echo "[$(date)] REMINDER: $message" >> "$SCRIPT_DIR/logs/reminders.log"
-        ) &
-        
-        echo ""
-        if [ "$use_seconds" = "1" ]; then
-            echo "Reminder will appear in $seconds seconds"
-        else
-            echo "Reminder will appear in $minutes minutes"
-        fi
+
+    echo "$(date -d @$trigger_time '+%Y-%m-%d %H:%M:%S')|$message" >> "$REMINDERS_FILE"
+
+    (
+        sleep $delay
+        notify-send "⏰ Reminder" "$message" 2>/dev/null || echo "REMINDER: $message"
+    ) &
+
+    display_success "Reminder set for $(date -d @$trigger_time '+%H:%M:%S')"
+    pause_screen
+}
+
+view_reminders() {
+    clear
+    display_header "CURRENT REMINDERS"
+    if [ ! -s "$REMINDERS_FILE" ]; then
+        display_info "No reminders set."
     else
-        display_info "Cancelled"
+        printf "%-20s | %s\n" "Execution Time" "Message"
+        echo "----------------------------------------------------"
+        cat "$REMINDERS_FILE" | while IFS='|' read -r time msg; do
+            printf "%-20s | %s\n" "$time" "$msg"
+        done
     fi
-    
     echo ""
     pause_screen
 }
-```
 
----
+clear_reminders() {
+    > "$REMINDERS_FILE"
+    display_success "Reminders cleared!"
+    pause_screen
+}
 
-## 🎨 RÉSULTAT
+view_scheduled_tasks() {
+    clear
+    display_header "SYSTÈME & TÂCHES PLANIFIÉES"
 
-### Menu Shutdown:
-```
-========================================
-      SCHEDULE SHUTDOWN
-========================================
+    echo "--- Statut de l'extinction ---"
+    if [ -f /run/systemd/shutdown/scheduled ] || pgrep -x "shutdown" > /dev/null; then
+        display_warning "⚠️ Un arrêt du système est programmé !"
+        echo "Pour annuler : sudo shutdown -c"
+    else
+        display_info "✅ Aucun arrêt système programmé."
+    fi
 
-Choose shutdown time:
-  1. In 15 seconds (test)      ← NOUVEAU
-  2. In 5 minutes
-  3. In 30 minutes
-  4. In 1 hour
-  5. Custom time (minutes)
-  0. Cancel
+    echo ""
+    echo "--- File d'attente des tâches (atq) ---"
+    if check_command_exists "atq"; then
+        at_jobs=$(atq 2>/dev/null)
+        if [ -n "$at_jobs" ]; then
+            echo "$at_jobs" | sort -k2
+        else
+            echo "Aucune tâche 'at' détectée."
+        fi
+    fi
 
-Enter choice: 1
-
-Scheduling shutdown in 15 seconds (TEST MODE)
-
-Confirm? (y/n): y
-✅ Shutdown scheduled
-
-Press Enter to continue...
-```
-
-### Menu Reminder:
-```
-========================================
-      SET REMINDER
-========================================
-
-Enter reminder message: Test reminder
-
-When should the reminder trigger?
-  1. In 15 seconds (test)      ← NOUVEAU
-  2. In 5 minutes
-  3. In 15 minutes
-  4. In 30 minutes
-  5. In 1 hour
-  6. Custom (minutes)
-
-Enter choice: 1
-
-Reminder will trigger in 15 seconds (TEST MODE)
-
-Confirm? (y/n): y
-✅ Reminder set!
-
-Reminder will appear in 15 seconds
-
-Press Enter to continue...
+    echo ""
+    echo "--- Rappels enregistrés (Fichier) ---"
+    if [ -s "$REMINDERS_FILE" ]; then
+        printf "%-20s | %s\n" "Heure prévue" "Message"
+        echo "----------------------------------------------------"
+        cat "$REMINDERS_FILE"
+    else
+        echo "Aucun rappel dans le fichier."
+    fi
+    pause_screen
+}
