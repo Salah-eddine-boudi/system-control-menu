@@ -45,35 +45,7 @@ Interactive terminal-based menu to control Ubuntu system functions.
 
 ---
 
-## 🆕 Latest Updates
 
-### Version 1.0.0 (February 2026)
-
-**New Modules Added:**
-
-#### 🔐 Password Generator
-- Generate secure random passwords (8-32 characters)
-- Include numbers and symbols options
-- Save passwords with labels and usernames
-- View all saved passwords
-- Delete all passwords option
-
-#### 🎨 Theme Customization
-- 5 theme options available
-- Save theme preference
-- View current active theme
-- Themes: Default (Blue), Dark, Matrix (Green), Purple, Ocean (Cyan)
-
-#### 🔍 File Finder _(In Development)_
-- Search files by name
-- Search by file extension
-- Search by file size
-- Find recent files (last 7 days)
-- Open found files with default application
-
-**Currently: 12 modules functional, 1 in development**
-
----
 
 ## 🚀 Installation
 ```bash
