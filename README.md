@@ -132,7 +132,7 @@ system-control-menu/
 ### Main Menu
 ```
 ╔════════════════════════════════════╗
-║   SYSTEM CONTROL MENU v1.0.0       ║
+║   SYSTEM CONTROL MENU v4.0.0       ║
 ╚════════════════════════════════════╝
 
   ▶ 📡 WiFi Management
